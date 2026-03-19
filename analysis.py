@@ -2,48 +2,33 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# 1. Setup the data (Based on your DMC-Region C snippet)
-# You can also load this from a CSV: df = pd.read_csv('rainfall_data.csv')
-data = {
-    'Time_hrs': [0, 0.1, 0.2, 0.3, 0.4],
-    '10-Year': [0, 0.00655, 0.01183, 0.01715, 0.02258],
-    '25-Year': [0, 0.0082, 0.01481, 0.02147, 0.02827],
-    '50-Year': [0, 0.00965, 0.01742, 0.02526, 0.03325],
-    '100-Year': [0, 0.01129, 0.02037, 0.02955, 0.0389],
-}
+# 1. Load the Excel file
+# Adjusted to match your file structure in the screenshot
+file_path = 'Hyetograph.xlsx' 
 
-df = pd.DataFrame(data)
+# Make sure 'Sheet1' matches the name of the tab in your Excel file
+# If your tab is named something else (like "DDF"), change it here:
+df = pd.read_excel(file_path, sheet_name='Sheet1')
 
-# 2. Set Plot Style
+# 2. Identify columns (Assumes column 1 is Time and others are Return Periods)
+# Based on your previous table, this will pick 'T (hrs)' as the X-axis
+time_col = df.columns[0]
+storm_cols = df.columns[1:]
+
+# 3. Setup the Plot
 sns.set_theme(style="whitegrid")
 plt.figure(figsize=(10, 6))
 
-# 3. Plotting Cumulative Curves
-for column in df.columns[1:]:
-    plt.plot(df['Time_hrs'], df[column], marker='o', label=f'{column} Storm')
+# 4. Plot Cumulative Precipitation
+for col in storm_cols:
+    plt.plot(df[time_col], df[col], label=f'{col}', marker='.')
 
-# 4. Formatting the Graph
-plt.title('SCS Method: Cumulative Precipitation Hyetograph', fontsize=14)
+# 5. Formatting
+plt.title('SCS Method Hyetographs from Atlas 14', fontsize=14)
 plt.xlabel('Time (hours)', fontsize=12)
 plt.ylabel('Precipitation Depth (inches)', fontsize=12)
-plt.legend(title="Return Period")
-plt.grid(True, which="both", ls="-", alpha=0.5)
-
-# Save and Show
+plt.legend(title="Storm Frequency", bbox_to_anchor=(1.05, 1), loc='upper left')
 plt.tight_layout()
-plt.savefig('ddf_graph.png', dpi=300)
+
+# 6. Display the result
 plt.show()
-
-# --- Optional: Incremental Bar Chart (For a single return period) ---
-def plot_incremental(return_period='100-Year'):
-    plt.figure(figsize=(8, 5))
-    # Calculate difference between rows to get incremental depth
-    incremental = df[return_period].diff().fillna(0)
-    
-    plt.bar(df['Time_hrs'], incremental, width=0.08, color='skyblue', edgecolor='navy')
-    plt.title(f'Incremental Rainfall Hyetograph - {return_period}')
-    plt.xlabel('Time (hrs)')
-    plt.ylabel('Incremental Depth (in)')
-    plt.show()
-
-# plot_incremental('100-Year')
