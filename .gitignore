@@ -1,0 +1,8 @@
+├── data/
+│   └── atlas14_data.csv       # Export your Excel table to CSV here
+├── scripts/
+│   └── generate_graphs.py     # The Python script I provided
+├── output/
+│   └── 100yr_hyetograph.png   # Where your saved plots will go
+├── requirements.txt           # List of libraries (pandas, matplotlib, seaborn)
+└── README.md                  # Instructions on how to run the code
